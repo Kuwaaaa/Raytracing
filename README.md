@@ -1,5 +1,5 @@
 # RaytracingInOneWeek
-Implemented  path trace
+Implemented  path tracing
 
 One week result image(actually it takes me almost one month 0...0):
 ![img](https://github.com/Kuwaaaa/RaytracingInOneWeek/blob/main/image/image.jpg)
