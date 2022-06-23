@@ -9,3 +9,7 @@ One week result image(actually it takes me almost one month 0...0):
 Next week session2 result:  
 ![img](https://github.com/Kuwaaaa/RaytracingInOneWeek/blob/main/image/next_week_session2.jpg)  
 (400/225 200spp --- random scene with bounding volume hierarchy)
+
+Cornell box：
+!![img](https://github.com/Kuwaaaa/RaytracingInOneWeek/blob/main/image/cornell.jpg) 
+(640/640 400spp)
