@@ -10,10 +10,17 @@
 #include "hit/texture.h"
 #include "hit/aarect.h"
 #include "hit/box.h"
+#include "scene/scene.h"
 
+#include "jpeglib.h"
+
+
+#include <future>
+#include <thread>
 
 #include <iostream>
 
+using namespace std;
 // Session2 : Add motion blur by add time property.
 //            This is simulate shutter open and close.  
 // Session3 : 实现了bvh. bvh通过对物体构建包围盒，来快速判定区域内是否有物体，极大加速了光追的速度。
@@ -105,7 +112,7 @@ hittable_list random_scene() {
 hittable_list two_spheres() {
     hittable_list objects;
 
-     auto checker = make_shared<checker_texture>(color(0.2, 0.3, 0.1), color(0.9, 0.9, 0.9));
+    auto checker = make_shared<checker_texture>(color(0.2, 0.3, 0.1), color(0.9, 0.9, 0.9));
 
     objects.add(make_shared<sphere>(point3(0,-10, 0), 10, make_shared<lambertian>(checker)));
     objects.add(make_shared<sphere>(point3(0, 10, 0), 10, make_shared<lambertian>(checker)));
@@ -164,14 +171,14 @@ hittable_list cornell_box() {
     objects.add(make_shared<xz_rect>(0, 555, 0, 555, 555, white));
     objects.add(make_shared<xy_rect>(0, 555, 0, 555, 555, white));
 
-   shared_ptr<hittable> box1 = make_shared<box>(point3(0, 0, 0), point3(165, 330, 165), white);
-   box1 = make_shared<rotate_y>(box1, 15);
-   box1 = make_shared<translate>(box1, vec3(265,0,295));
-   objects.add(box1);
-   shared_ptr<hittable> box2 = make_shared<box>(point3(0,0,0), point3(165,165,165), white);
-   box2 = make_shared<rotate_y>(box2, -18);
-   box2 = make_shared<translate>(box2, vec3(130,0,65));
-   objects.add(box2);
+    shared_ptr<hittable> box1 = make_shared<box>(point3(0, 0, 0), point3(165, 330, 165), white);
+    box1 = make_shared<rotate_y>(box1, 15);
+    box1 = make_shared<translate>(box1, vec3(265,0,295));
+    objects.add(box1);
+    shared_ptr<hittable> box2 = make_shared<box>(point3(0,0,0), point3(165,165,165), white);
+    box2 = make_shared<rotate_y>(box2, -18);
+    box2 = make_shared<translate>(box2, vec3(130,0,65));
+    objects.add(box2);
 
     return objects;
 }
@@ -184,12 +191,18 @@ hittable_list volumeTest() {
     return hittable_list(objects);
 }
 
+void renderPass(const Scene& scene, color& pixel_color, double u, double v, int& count) {
+    ray r = scene.cam.get_ray(u, v);
+    pixel_color += ray_color(r, scene.background, scene.world, scene.max_depth);
+    count --;
+}
+
+
 int main()
 {
     // Image
     auto aspect_radio = 16.0/9.0;
     int image_width = 400;
-    int image_height = static_cast<int>(image_width / aspect_radio);
     int samples_per_pixel = 50;
     int max_depth = 10;
 
@@ -212,7 +225,7 @@ int main()
     color background(0.7, 0.8, 0.1);
     
     bvh_node world;
-    switch (6)
+    switch (2)
     {
     case 1:
         world = random_scene();
@@ -239,9 +252,9 @@ int main()
             break;
     case 6:
             world = cornell_box();
-            image_width = 400;
+            image_width = 640;
             aspect_radio = 1.0;
-            samples_per_pixel = 200;
+            samples_per_pixel = 400;
             background = color(0,0,0);
             lookfrom = point3(278, 278, -800);
             lookat = point3(278, 278, 0);
@@ -251,23 +264,37 @@ int main()
             world = volumeTest();
             break;
     }
+    int image_height = static_cast<int>(image_width / aspect_radio);
 
     // camera cam(point3(-2, 2, 1), point3(0, 0, -1), vec3(0, 1, 0), 20.0, aspect_radio);
     camera cam(lookfrom, lookat, vup, vfov, aspect_radio, aperture, dist_to_focus, 0.0, 1.0);
 
+    Scene scene(world, cam, samples_per_pixel, background, image_width, aspect_radio,
+            max_depth);
+
+    
     // Render
     std::cout <<  "P3\n" << image_width << " " << image_height << "\n255\n";
     double u, v;
     for (int j = image_height-1; j >= 0; j--) {
         std::cerr << "\rScanlines remaining: " << j << " " << std::flush;
+        
         for (int i = 0; i < image_width; i++) {
             color pixel_color(0, 0, 0);
+            u = (i + random_double()) / (image_width-1);
+            v = (j + random_double()) / (image_height-1);
+            
+            int count = samples_per_pixel;
+            future<void> fut[samples_per_pixel];
+            thread a[8];
+
             for (int s = 0; s < samples_per_pixel; ++s){
-                u = (i + random_double()) / (image_width-1);
-                v = (j + random_double()) / (image_height-1);
-                ray r = cam.get_ray(u, v);
-                pixel_color += ray_color(r, background, world, max_depth);
+                // fut[s] = async(launch::async, renderPass, cref(scene), ref(pixel_color), u, v, ref(count));
+                a[s] = thread(renderPass, cref(scene), ref(pixel_color), u, v, ref(count));
+                a[s].detach();
             } 
+            while(count > 1)
+                ;
             write_color(std::cout, pixel_color, samples_per_pixel);
         }   
     }

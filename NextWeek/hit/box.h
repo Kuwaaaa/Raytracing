@@ -41,6 +41,6 @@ box::box(const point3& p0, const point3& p1, shared_ptr<material> ptr) {
 
 
 bool box::hit(const ray& ray, double t_min, double t_max, hit_record& rec) const {
-    sides.hit(ray, t_min, t_max, rec);
+    return sides.hit(ray, t_min, t_max, rec);
 }
 #endif

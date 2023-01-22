@@ -8,12 +8,14 @@ inline double pdf(double x) {
 }
 
 int main() {
-    int N = 1000000;
-    auto sum = 0.0;
+    int N = 1000;
+    int inside_circle = 0;
     for (int i = 0; i < N; i++) {
-        auto x = sqrt(random_double(0,2));
-        sum += x*x;
+        auto x = random_double(-1,1);
+        auto y = random_double(-1,1);
+        if (x*x + y*y < 1)
+            inside_circle++;
     }
     std::cout << std::fixed << std::setprecision(12);
-    std::cout << "I = " << sum/N << '\n';
+    std::cout << "Estimate of Pi = " << 4*double(inside_circle) / N << '\n';
 }

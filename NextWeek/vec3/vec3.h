@@ -67,6 +67,7 @@ class vec3 {
 
         std::ostream& operator << (std::ostream& out) {
             out << e[0] << " " << e[1] << " " << e[2];
+            return out;
         }
 
     public:
