@@ -32,7 +32,7 @@ int main()
 {
     // Image
     const auto aspect_radio = 16.0/9.0;
-    const int image_width = 1920;
+    const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_radio);
     const int samples_per_pixel = 100;
     const int max_depth = 50;
@@ -42,7 +42,7 @@ int main()
     hittable_list world;
 
     // 两个朗博球，两个金属球的材质
-    auto material_ground = make_shared<lambertian>(color(.8, .6, .2));
+    auto material_ground = make_shared<lambertian>(color(.8, .2, .5));
     auto material_center = make_shared<lambertian>(color(0.1, 0.2, 0.5));
     auto material_left   = make_shared<dielectric>(-1.5);
     auto material_right  = make_shared<metal>(color(.8,.6, .2), 1.0);

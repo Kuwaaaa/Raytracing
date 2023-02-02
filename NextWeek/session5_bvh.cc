@@ -1,9 +1,9 @@
 #include "rtweekend.h"
 
 #include "color.h"
+#include "camera.h"
 #include "hit/hittable_list.h"
 #include "hit/sphere.h"
-#include "camera.h"
 #include "material/material.h"
 #include "hit/moving_sphere.h"
 #include "hit/bvh.h"
@@ -14,6 +14,7 @@
 
 #include "jpeglib.h"
 
+#include "util/timer.h"
 
 #include <future>
 #include <thread>
@@ -58,13 +59,12 @@ color ray_color(const ray& r, const color& background, const hittable& world, in
 hittable_list random_scene() {
     hittable_list world;
 
-    
     // Session4 add
     // ------------
     // auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
-    // world.add(make_shared<sphere>(point3(0,-1000,0), 1000, ground_material));
-    auto checker = make_shared<checker_texture>(color(0.2, 0.3, 0.1), color(0.9, 0.9, 0.9));
-    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(checker)));
+    // // world.add(make_shared<sphere>(point3(0,-1000,0), 1000, ground_material));
+    // auto checker = make_shared<checker_texture>(color(0.2, 0.3, 0.1), color(0.9, 0.9, 0.9));
+    // world.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(checker)));
     // ------------
 
     for (int a = -11; a < 11; a++) {
@@ -197,7 +197,6 @@ void renderPass(const Scene& scene, color& pixel_color, double u, double v, int&
     count --;
 }
 
-
 int main()
 {
     // Image
@@ -222,10 +221,10 @@ int main()
     auto dist_to_focus = (lookfrom - lookat).length();
     // auto dist_to_focus = sqrt(13);
     float aperture = 0;
-    color background(0.7, 0.8, 0.1);
+    color background(0.9, 0.9, 0.9);
     
     bvh_node world;
-    switch (2)
+    switch (1)
     {
     case 1:
         world = random_scene();
@@ -236,13 +235,16 @@ int main()
     case 2:
         world = two_spheres();
         break;
+
     case 3:
         world = two_perlin_spheres();
         break;
+
     case 4:
         vfov = 20;
         world = earth();
         break;
+
     case 5:
             world = simple_light();
             samples_per_pixel = 400;
@@ -250,6 +252,7 @@ int main()
             lookat = point3(0,2,0);
             vfov = 20.0;
             break;
+
     case 6:
             world = cornell_box();
             image_width = 640;
@@ -260,6 +263,7 @@ int main()
             lookat = point3(278, 278, 0);
             vfov = 40.0;
             break;
+            
     case 7:
             world = volumeTest();
             break;
@@ -276,25 +280,18 @@ int main()
     // Render
     std::cout <<  "P3\n" << image_width << " " << image_height << "\n255\n";
     double u, v;
+    Timer timer(&cerr);
     for (int j = image_height-1; j >= 0; j--) {
         std::cerr << "\rScanlines remaining: " << j << " " << std::flush;
-        
         for (int i = 0; i < image_width; i++) {
             color pixel_color(0, 0, 0);
-            u = (i + random_double()) / (image_width-1);
-            v = (j + random_double()) / (image_height-1);
-            
-            int count = samples_per_pixel;
-            future<void> fut[samples_per_pixel];
-            thread a[8];
-
             for (int s = 0; s < samples_per_pixel; ++s){
-                // fut[s] = async(launch::async, renderPass, cref(scene), ref(pixel_color), u, v, ref(count));
-                a[s] = thread(renderPass, cref(scene), ref(pixel_color), u, v, ref(count));
-                a[s].detach();
+                u = (i + random_double()) / (image_width-1);
+                v = (j + random_double()) / (image_height-1);
+                ray r = cam.get_ray(u, v);
+                pixel_color += ray_color(r, background, world, max_depth);
+                
             } 
-            while(count > 1)
-                ;
             write_color(std::cout, pixel_color, samples_per_pixel);
         }   
     }
