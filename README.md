@@ -2,8 +2,8 @@
 Implemented  path tracing
 
 One week result image(actually it takes me almost one month 0...0):
-![img](images/shaoji.jpg)
-(1920/1080----including material: dielectric,lambertian,metal)
+![img](images/random.png)
+(640/400----including material: dielectric,lambertian,metal)
 
 # Raytracing In Next Week  
 Next week session2 result:  
