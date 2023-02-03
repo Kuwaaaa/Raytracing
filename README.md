@@ -1,5 +1,5 @@
 # Raytracing In One Week
-Implemented  path tracing
+Implemented path tracer
 
 One week result image(actually it takes me almost one month 0...0):
 ![img](images/random.png)
