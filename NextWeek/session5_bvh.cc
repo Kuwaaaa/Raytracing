@@ -20,6 +20,7 @@
 #include <thread>
 
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 // Session2 : Add motion blur by add time property.
@@ -56,13 +57,17 @@ color ray_color(const ray& r, const color& background, const hittable& world, in
     // return (1.0-t)*color(1, 1, 1) + t*color(0.2, 0.6, 0.6);
 }
 
+color ray_color(const ray& r, const Scene& scene) {
+    ray_color(r, scene.background, scene.world, scene.max_depth);
+}
+
 hittable_list random_scene() {
     hittable_list world;
 
     // Session4 add
     // ------------
-    // auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
-    // // world.add(make_shared<sphere>(point3(0,-1000,0), 1000, ground_material));
+    auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
+    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, ground_material));
     // auto checker = make_shared<checker_texture>(color(0.2, 0.3, 0.1), color(0.9, 0.9, 0.9));
     // world.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(checker)));
     // ------------
@@ -197,6 +202,17 @@ void renderPass(const Scene& scene, color& pixel_color, double u, double v, int&
     count --;
 }
 
+color PerPixel(int x, int y, const Scene& scene)
+{
+    color pixel_color(0, 0, 0);
+    for (int s = 0; s < scene.samples_per_pixel; ++s){
+        u = (x + random_double()) / (scene.image_width - 1);
+        v = (y + random_double()) / (scene.image_height - 1);
+        ray r = cam.get_ray(u, v);
+        pixel_color += ray_color(r, scene);       
+    }
+}
+
 int main()
 {
     // Image
@@ -276,13 +292,34 @@ int main()
     Scene scene(world, cam, samples_per_pixel, background, image_width, aspect_radio,
             max_depth);
 
-    
+    float* buf = new float[image_width * image_height * 3];
+
     // Render
     std::cout <<  "P3\n" << image_width << " " << image_height << "\n255\n";
     double u, v;
-    Timer timer(&cerr);
-    for (int j = image_height-1; j >= 0; j--) {
-        std::cerr << "\rScanlines remaining: " << j << " " << std::flush;
+    Timer timer(std::cerr);
+
+    for_each(std::execution::par, beg(buf), end(buf), []()
+        {
+            for (int i = 0; i < image_width; i++) {
+            color pixel_color(0, 0, 0);
+            for (int s = 0; s < samples_per_pixel; ++s){
+                u = (i + random_double()) / (image_width-1);
+                v = (j + random_double()) / (image_height-1);
+                ray r = cam.get_ray(u, v);
+                pixel_color += ray_color(r, background, world, max_depth);
+                
+            }
+            int idx = (j * image_width + i) * 3;
+            buf[idx ] = pixel_color[0];  
+            buf[idx + 1] = pixel_color[1];  
+            buf[idx + 2] = pixel_color[2];  
+            // write_color(std::cout, pixel_color, samples_per_pixel);`
+        }   
+        })
+
+    for (int j = 0; j < image_height; j++) {
+        std::cerr << "\rScanlines remaining: " << image_height + 1 - j << " " << std::flush;
         for (int i = 0; i < image_width; i++) {
             color pixel_color(0, 0, 0);
             for (int s = 0; s < samples_per_pixel; ++s){
@@ -291,10 +328,16 @@ int main()
                 ray r = cam.get_ray(u, v);
                 pixel_color += ray_color(r, background, world, max_depth);
                 
-            } 
-            write_color(std::cout, pixel_color, samples_per_pixel);
+            }
+            int idx = (j * image_width + i) * 3;
+            buf[idx ] = pixel_color[0];  
+            buf[idx + 1] = pixel_color[1];  
+            buf[idx + 2] = pixel_color[2];  
+            // write_color(std::cout, pixel_color, samples_per_pixel);`
         }   
     }
+
+    write_color(std::cout, buf, image_width, image_height, samples_per_pixel);
 
     std::cerr << "\nDone.\n";
 }

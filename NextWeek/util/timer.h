@@ -5,11 +5,11 @@ struct Timer
 {
     std::chrono::time_point<std::chrono::system_clock> start, end;
     std::chrono::duration<float> duration;
-    std::ostream* out;
+    std::ostream& out;
 
-    Timer(std::ostream* os = &std::cout)
+    Timer(std::ostream& os)
+        : out(os)
     {
-        out = os;
         start = std::chrono::high_resolution_clock::now();
     }
 
@@ -19,7 +19,7 @@ struct Timer
         duration = end - start;
 
         float ms = duration.count() * 1000.0f;
-        *out << "Timer took " << ms << " ms\n";
+        out << "Timer took " << ms << " ms\n";
     }
     
 };

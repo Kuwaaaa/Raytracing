@@ -69,9 +69,17 @@ void func3()
     std::cout << "I = " << 2 * sum/N << '\n';
 }
 
+#include <algorithm>
+#include <vector>
+#include <execution>
 
 int main() {
-    func3();
+    // func3();
 
+    int a[] = {0,1};
+std::vector<int> v;
+std::for_each(std::execution::par, std::begin(a), std::end(a), [&](int i) {
+    v.push_back(i*2+1); // Error: data race
+});
     return 0;    
 }
