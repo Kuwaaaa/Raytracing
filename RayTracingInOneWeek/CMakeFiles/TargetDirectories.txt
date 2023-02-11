@@ -1,0 +1,3 @@
+/home/daze/rayTrack/RayTracingInOneWeek/CMakeFiles/rebuild_cache.dir
+/home/daze/rayTrack/RayTracingInOneWeek/CMakeFiles/edit_cache.dir
+/home/daze/rayTrack/RayTracingInOneWeek/CMakeFiles/randomScene.dir
