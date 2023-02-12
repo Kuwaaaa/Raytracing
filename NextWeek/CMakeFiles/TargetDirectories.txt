@@ -1,0 +1,3 @@
+/home/daze/rayTrack/NextWeek/CMakeFiles/rebuild_cache.dir
+/home/daze/rayTrack/NextWeek/CMakeFiles/edit_cache.dir
+/home/daze/rayTrack/NextWeek/CMakeFiles/scene.dir

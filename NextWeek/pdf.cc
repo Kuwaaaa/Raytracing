@@ -72,8 +72,14 @@ void func3()
 #include <algorithm>
 #include <vector>
 #include <execution>
+// #include <GLFW/glfw3.h>
 
 int main() {
+
+    // if(!glfwInit())
+    // {
+    //     cout << " hah"<<endl;
+    // }
     // func3();
 
     int a[] = {0,1};

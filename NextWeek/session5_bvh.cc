@@ -58,7 +58,7 @@ color ray_color(const ray& r, const color& background, const hittable& world, in
 }
 
 color ray_color(const ray& r, const Scene& scene) {
-    ray_color(r, scene.background, scene.world, scene.max_depth);
+    return ray_color(r, scene.background, scene.world, scene.max_depth);
 }
 
 hittable_list random_scene() {
@@ -205,12 +205,15 @@ void renderPass(const Scene& scene, color& pixel_color, double u, double v, int&
 color PerPixel(int x, int y, const Scene& scene)
 {
     color pixel_color(0, 0, 0);
+    double u, v;
     for (int s = 0; s < scene.samples_per_pixel; ++s){
         u = (x + random_double()) / (scene.image_width - 1);
         v = (y + random_double()) / (scene.image_height - 1);
-        ray r = cam.get_ray(u, v);
+        ray r = scene.cam.get_ray(u, v);
         pixel_color += ray_color(r, scene);       
     }
+
+    return pixel_color;
 }
 
 int main()
@@ -299,24 +302,24 @@ int main()
     double u, v;
     Timer timer(std::cerr);
 
-    for_each(std::execution::par, beg(buf), end(buf), []()
-        {
-            for (int i = 0; i < image_width; i++) {
-            color pixel_color(0, 0, 0);
-            for (int s = 0; s < samples_per_pixel; ++s){
-                u = (i + random_double()) / (image_width-1);
-                v = (j + random_double()) / (image_height-1);
-                ray r = cam.get_ray(u, v);
-                pixel_color += ray_color(r, background, world, max_depth);
+    // for_each(std::execution::par, beg(buf), end(buf), []()
+    //     {
+    //         for (int i = 0; i < image_width; i++) {
+    //         color pixel_color(0, 0, 0);
+    //         for (int s = 0; s < samples_per_pixel; ++s){
+    //             u = (i + random_double()) / (image_width-1);
+    //             v = (j + random_double()) / (image_height-1);
+    //             ray r = cam.get_ray(u, v);
+    //             pixel_color += ray_color(r, background, world, max_depth);
                 
-            }
-            int idx = (j * image_width + i) * 3;
-            buf[idx ] = pixel_color[0];  
-            buf[idx + 1] = pixel_color[1];  
-            buf[idx + 2] = pixel_color[2];  
-            // write_color(std::cout, pixel_color, samples_per_pixel);`
-        }   
-        })
+    //         }
+    //         int idx = (j * image_width + i) * 3;
+    //         buf[idx ] = pixel_color[0];  
+    //         buf[idx + 1] = pixel_color[1];  
+    //         buf[idx + 2] = pixel_color[2];  
+    //         // write_color(std::cout, pixel_color, samples_per_pixel);`
+    //     }   
+    //     })
 
     for (int j = 0; j < image_height; j++) {
         std::cerr << "\rScanlines remaining: " << image_height + 1 - j << " " << std::flush;

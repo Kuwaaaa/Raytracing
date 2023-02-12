@@ -1,0 +1,1 @@
+/usr/bin/c++  -D__TBB_DYNAMIC_LOAD_ENABLED=0  -rdynamic CMakeFiles/main.dir/session5_bvh.cc.o  -o main 
