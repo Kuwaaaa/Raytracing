@@ -9,8 +9,15 @@ public:
     aabb(const point3&a, const point3&b )
         : minimum(a), maximum(b) { }
 
-    point3 min() const {return minimum; }
-    point3 max() const {return maximum; }
+    // debug: 7541ms; relese:1380ms
+    /*point3 min() const {return minimum; }
+    point3 max() const {return maximum; }*/
+
+    // debug: 6004ms; relese:1283ms
+    const point3& min() const {return minimum; }
+    const point3& max() const {return maximum; }
+
+
     // Suppose we can assume the intervals are not reversed
     // (so the first value is less than the second value in the interval) and we want to return true in that case.
     // bool hit(const ray& r, double t_min, double t_max) {

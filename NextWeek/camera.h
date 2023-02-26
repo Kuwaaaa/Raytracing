@@ -5,16 +5,16 @@
 
 // 
 
-class camera {
+class Camera {
     public:
-        camera(
-            point3 lookfrom,
-            point3 lookat,
-            point3 vup,
-            double vfov,        // vertical field-of-view in degrees
-            double aspect_ratio,
-            double aperture,
-            double focus_dist,
+        Camera(
+            double aspect_ratio = 16 / 9,
+            point3 lookfrom = point3(13, 2, 13),
+            point3 lookat = point3(0, 0, 0),
+            point3 vup = point3(0, 1, 0),
+            double vfov = 40.0,        // vertical field-of-view in degrees
+            double aperture = 0,
+            double focus_dist = (point3(13, 2, 13) - point3(0, 0, 0)).length(),
             double _time0 = 0,
             double _time1 = 0
          ) {

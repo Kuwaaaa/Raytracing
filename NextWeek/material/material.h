@@ -130,15 +130,15 @@ public:
     virtual bool scatter(
             const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered
         ) const override {
-            scattered.origin() = rec.t2;
+            /*scattered.origin() = rec.t2;
             scattered.direction() = r_in.direction();
 
-            attenuation = (1 - sigma_a) * vColor;
+            attenuation = (1 - sigma_a) * vColor;*/
             return true;
         }
 public:
     color vColor;
-    float sigma_a;
+    double sigma_a;
 };
 
 #endif // MATERIAL_H
