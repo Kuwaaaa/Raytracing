@@ -21,7 +21,7 @@ class CPU :
 	public Device
 {
 public:
-	CPU(Scene scene, Camera cam);
+	CPU(Scene scene);
 	virtual void render(int ssp = 50) override;
 	const Scene& get_scene() const;
 	void setGlTex(GLuint texId);
@@ -55,8 +55,13 @@ color CPU::ray_color(const ray& r, int depth)
 {
 	hit_record rec;
 
-	if (depth <= 0)
+	double lifePR = 0.8;
+
+	if (random_double() > lifePR)
 		return color(0, 0, 0);
+
+	/*if (depth <= 0)
+		return color(0, 0, 0);*/
 
 	if (!m_scene.world.hit(r, 0.001, infinity, rec))
 		return m_scene.background;
@@ -68,12 +73,13 @@ color CPU::ray_color(const ray& r, int depth)
 	if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered))
 		return emitted;
 
-	return emitted + attenuation * ray_color(scattered, depth - 1);
+	return (emitted + attenuation * ray_color(scattered, depth - 1)) / lifePR;
+	//return emitted + attenuation * ray_color(scattered, depth - 1);
 }
 
 
-CPU::CPU(Scene scene, Camera cam)
-	:m_scene(scene), m_camera(cam) {
+CPU::CPU(Scene scene)
+	:m_scene(scene), m_camera(scene.getCamera()) {
 	m_ImageVerticalIter.resize(scene.image_width);
 	m_ImageHorizontalIter.resize(scene.image_height);
 	for (int i = 0; i < scene.image_width; i++)
@@ -131,4 +137,5 @@ void CPU::setGlTex(GLuint texId)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+
 }

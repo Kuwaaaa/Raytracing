@@ -28,7 +28,8 @@ void Hint();
 GLFWwindow* glfw_gladInit(const std::string& winName, std::function<void()> hint = Hint, int width = 800, int height = 600 );
 // 创建VAO VBO
 void makeVO(const float* vertices, int arraySz, vector<float> index, unsigned int& VAO, unsigned int& VBO);
-
+// 
+void make_Plane_EBO(GLuint& VAO, GLuint& VBO, GLuint& EBO);
 // 通用全局变量宏
 #define GLOBALVALUE \
 const unsigned int SCR_WIDTH = 800;\

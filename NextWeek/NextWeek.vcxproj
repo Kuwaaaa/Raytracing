@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -112,7 +112,6 @@
   <ItemGroup>
     <ClCompile Include="bvh.cpp" />
     <ClCompile Include="common.cpp" />
-    <ClCompile Include="CPU.cpp" />
     <ClCompile Include="hittable_list.cpp" />
     <ClCompile Include="scene\scene.cpp" />
     <ClCompile Include="session5_bvh.cc" />
@@ -158,6 +157,8 @@
     <None Include="build\cmakefiles\3.23.0-rc1\CMakeDetermineCompilerABI_C.bin" />
     <None Include="build\cmakefiles\3.23.0-rc1\CMakeDetermineCompilerABI_CXX.bin" />
     <None Include="ClassDiagram.cd" />
+    <None Include="test.frag" />
+    <None Include="test.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

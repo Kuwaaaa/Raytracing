@@ -85,6 +85,12 @@ const extern GLfloat planeVertices[] = {
 	 -1.0f,  1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
 };
 
+// Plane EBO indecis
+unsigned int EBO_plane_indices[] = {
+		0, 1, 3, // first triangle
+		1, 2, 3  // second triangle
+};
+
 // 带纹理坐标的立方体顶点
 // [288] { 3，3，2}
 const extern GLfloat cubeTexVertices[] = {
@@ -323,6 +329,19 @@ void makeVO(const float* vertices, int arraysz, std::vector<float> index, unsign
 		offset += sz;
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
+void make_Plane_EBO(GLuint& VAO, GLuint& VBO, GLuint& EBO)
+{
+	makeVO(planeVertices, sizeof(planeVertices), { 3, 3, 2 }, VAO, VBO);
+	glGenBuffers(1, &EBO);
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(EBO_plane_indices), EBO_plane_indices, GL_STATIC_DRAW);
+	
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
 #endif

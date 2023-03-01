@@ -1,5 +1,17 @@
+# Visual studio folder
+.vshistory/
+.vs/
+NextWeek/.vshistory
+*/x64
+*Debug
+
+# bin
+*/build
+RayTracingInOneWeek/out
+*.bin
+
 # Image files
-*.jpg
+#*.jpg
 *.ppm
 
 # Prerequisites
