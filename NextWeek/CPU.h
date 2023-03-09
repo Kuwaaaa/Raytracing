@@ -57,8 +57,8 @@ color CPU::ray_color(const ray& r, int depth)
 
 	double lifePR = 0.8;
 
-	if (random_double() > lifePR)
-		return color(0, 0, 0);
+	/*if (random_double() > lifePR)
+		return color(0, 0, 0);*/
 
 	/*if (depth <= 0)
 		return color(0, 0, 0);*/
@@ -73,8 +73,8 @@ color CPU::ray_color(const ray& r, int depth)
 	if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered))
 		return emitted;
 
-	return (emitted + attenuation * ray_color(scattered, depth - 1)) / lifePR;
-	//return emitted + attenuation * ray_color(scattered, depth - 1);
+	//return (emitted + attenuation * ray_color(scattered, depth - 1)) / lifePR;
+	return emitted + attenuation * ray_color(scattered, depth - 1);
 }
 
 
