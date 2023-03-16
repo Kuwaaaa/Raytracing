@@ -1,6 +1,8 @@
 #ifndef RAYTRAING_H
 
 #include "rtweekend.h"
+#include "vec3/vec3.h"
+#include "vec3/ray.h"
 #include "color.h"
 #include "camera.h"
 #include "hit/hittable_list.h"

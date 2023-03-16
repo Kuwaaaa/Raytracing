@@ -2,6 +2,8 @@
 #define TEXTURE_H
 
 #include "../rtweekend.h"
+#include "vec3/vec3.h"
+#include "vec3/ray.h"
 #include "../3rd/stb_image.h"
 #include "perlin.h"
 

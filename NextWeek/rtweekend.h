@@ -24,17 +24,16 @@ double degrees_to_radians(double degrees) {
     return degrees * pi / 180.0;
 }
 
-// “less than” before the 1 is important as we will sometimes take advantage of that.
-// ?? 不知道这个0 <= r < 1什么时候用到了
 // Returns a random real in [0, 1]
 inline 
 double random_double() {
     // I dont know why rand() is not working in windows.
-#ifndef WIN32
+#ifndef _WIN32
     return rand() / (RAND_MAX + 1.0);
 #else
-    static std::default_random_engine e;
-    static std::uniform_real_distribution<double> u(0.0, 1.0);
+    // Statement variable with thread_local to provide standalone random engine to every thread.
+    static thread_local std::default_random_engine e;
+    static thread_local std::uniform_real_distribution<double> u(0.0, 1.0);
     return u(e);
 #endif // !WIN32
 }
@@ -58,8 +57,5 @@ inline int random_int(int min, int max) {
 }
 
 // Common Headers
-
-#include "vec3/vec3.h"
-#include "vec3/ray.h"
 
 #endif // RTWEEKEND_H

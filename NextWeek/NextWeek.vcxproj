@@ -101,7 +101,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <ShowIncludes>true</ShowIncludes>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -110,12 +110,24 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="bvh.cpp" />
     <ClCompile Include="common.cpp" />
-    <ClCompile Include="hittable_list.cpp" />
+    <ClCompile Include="CPU.cpp" />
+    <ClCompile Include="Device.cpp" />
+    <ClCompile Include="hit\aabb.cpp" />
+    <ClCompile Include="hit\aarect.cpp" />
+    <ClCompile Include="hit\box.cpp" />
+    <ClCompile Include="hit\bvh.cpp" />
+    <ClCompile Include="hit\hittable.cpp" />
+    <ClCompile Include="hit\hittable_list.cpp" />
+    <ClCompile Include="hit\sphere.cpp" />
+    <ClCompile Include="ONB.cpp" />
+    <ClCompile Include="pdf.cpp" />
+    <ClCompile Include="ray_expleam.cpp" />
     <ClCompile Include="scene\scene.cpp" />
-    <ClCompile Include="session5_bvh.cc" />
+    <ClCompile Include="main.cc" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="vec3\ray.cpp" />
+    <ClCompile Include="vec3\vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd\stb_image.h" />
@@ -133,11 +145,12 @@
     <ClInclude Include="hit\bvh.h" />
     <ClInclude Include="hit\hittable.h" />
     <ClInclude Include="hit\hittable_list.h" />
-    <ClInclude Include="hit\moving_sphere.h" />
     <ClInclude Include="hit\perlin.h" />
     <ClInclude Include="hit\sphere.h" />
     <ClInclude Include="hit\texture.h" />
     <ClInclude Include="material\material.h" />
+    <ClInclude Include="ONB.h" />
+    <ClInclude Include="pdf.h" />
     <ClInclude Include="raytracing.h" />
     <ClInclude Include="ray_expleam.h" />
     <ClInclude Include="rtweekend.h" />
