@@ -7,7 +7,7 @@ const double& hittable::pdf_value(const point3& o, const vec3& v) const
 
 const vec3& hittable::random(const vec3& o) const
 {
-    return vec3(1, 0, 0);
+    return vec3(1, 1, 1);
 }
 
 translate::translate(shared_ptr<hittable> p, const vec3& displacement)

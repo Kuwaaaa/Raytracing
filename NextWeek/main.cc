@@ -37,9 +37,10 @@ int main()
     GLuint texID3 = 0;
     glGenTextures(1, &texID3);
 
-    CPU m_cpu(scene);
+    CPU m_cpu(scene, false);
     double total_time = 0;
     int total_ssp = 0;
+    bool isPar = false;
     vector<double> timeLog;
     while (!glfwWindowShouldClose(window))
     {
@@ -59,7 +60,7 @@ int main()
             m_cpu.render(samples_per_pixel);
             m_cpu.setGlTex(texID3);
             glBindTexture(GL_TEXTURE_2D, texID3);
-            timeLog.push_back(timer.timePass());
+            timeLog.insert(timeLog.begin(), timer.timePass());
             total_ssp  += samples_per_pixel;
             total_time += timer.timePass();
             if (timeLog.size() > 4)
@@ -78,6 +79,11 @@ int main()
         ImGui::InputInt("ssp", &samples_per_pixel);
         ImGui::InputInt("maxDepth", &max_depth);
         m_cpu.setMaxDepth(max_depth);
+
+        if (ImGui::Checkbox("Parallel", &isPar))
+        {
+			m_cpu.setPar(isPar);
+		}
 
         ImGui::Spacing();
         for (const auto& i : timeLog)

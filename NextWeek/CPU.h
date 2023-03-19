@@ -23,12 +23,13 @@ class CPU :
 	public Device
 {
 public:
-	CPU(Scene scene);
+	CPU(Scene scene, bool par = true);
 	virtual void render(int ssp = 50) override;
-	const Scene& get_scene() const;
 	void setGlTex(GLuint texId);
 	void reset_Image();
 	void setMaxDepth(int depth);
+	const Scene& get_scene() const;
+	void setPar(bool);
 
 private:
 	color PerPixel(size_t x, size_t y, int ssp);
@@ -36,6 +37,7 @@ private:
 
 private:
 	std::vector<std::size_t> m_ImageVerticalIter, m_ImageHorizontalIter;
+	bool isPar;
 };
 
 

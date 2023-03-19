@@ -1,5 +1,6 @@
 #include "sphere.h"
-
+#include "../ONB.h"
+#include "../pdf.h"
 
 sphere::sphere(point3 cen, double r, shared_ptr<material> m)
     : center(cen), radius(r), mat_ptr(m) 
@@ -69,6 +70,16 @@ bool sphere::bounding_box(double time0, double time1, aabb& output_box) const {
     return true;
 }
 
+const vec3& sphere::random(const point3& origin) const
+{
+    vec3 direction = center - origin;
+    float distance_squared = direction.length_squared();
+    Onb uvw;
+    uvw.build_from_w(direction);
+    
+    return uvw.local(random_to_sphere(radius, distance_squared));
+}
+
 
 // ------------------------------------- MOVING SPHERE ------------------------------------------
 
@@ -122,4 +133,17 @@ bool moving_sphere::bounding_box(double time0, double time1, aabb& output_box) c
     );
     output_box = surrounding_box(box0, box1);
     return true;
+}
+
+const vec3 random_to_sphere(float radius, float distance_squared)
+{
+    auto r1 = random_double();
+    auto r2 = random_double();
+    auto z = 1 + r2 * (sqrt(1 - radius * radius / distance_squared) - 1);
+
+    auto phi = 2 * pi * r1;
+    auto x = cos(phi) * sqrt(1 - z * z);
+    auto y = sin(phi) * sqrt(1 - z * z);
+
+    return vec3(x, y, z);
 }

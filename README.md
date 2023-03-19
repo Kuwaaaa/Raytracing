@@ -1,6 +1,16 @@
 # Raytracing In One Week
 Implemented path tracer
 
+This project used vcpkg manage 3rd library.
+
+```
+    vcpkg install glfw3
+    vcpkg install glad
+    vcpkg install imgui
+    vcpkg integrate project 
+```
+
+## Image
 One week result image(actually it takes me almost one month 0...0):  
 ![img](images/random.png)
 (640/400----including material: dielectric,lambertian,metal)

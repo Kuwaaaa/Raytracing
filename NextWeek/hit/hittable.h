@@ -43,7 +43,6 @@ public:
 };
 
 
-
 class rotate_y : public hittable {
     public:
         rotate_y(shared_ptr<hittable> p, double angle);

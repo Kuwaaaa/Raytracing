@@ -36,6 +36,12 @@ bool xy_rect::bounding_box(double time0, double time1, aabb& output_box) const
 	return true;
 }
 
+const vec3& xy_rect::random(const point3& origin) const
+{
+	auto random_point = point3(random_double(x0, x1), random_double(y0, y1), k);
+	return random_point - origin;
+}
+
 
 bool xz_rect::hit(const ray& r, double t_min, double t_max, hit_record& rec) const
 {
@@ -122,4 +128,10 @@ bool yz_rect::bounding_box(double time0, double time1, aabb& output_box) const
 			// dimension a small amount.
 	output_box = aabb(point3(k - 0.0001, y0, z0), point3(k + 0.0001, y1, z1));
 	return true;
+}
+
+const vec3& yz_rect::random(const point3& origin) const
+{
+	auto random_point3 = point3(k, random_double(y0, y1), random_double(z0, z1));
+	return random_point3 - origin;
 }

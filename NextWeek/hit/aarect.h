@@ -18,6 +18,7 @@ class xy_rect : public hittable {
             
         virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const override;
         virtual bool bounding_box(double time0, double time1, aabb& output_box) const override;
+        virtual const vec3& random(const point3& origin) const override;
 
     public:
         shared_ptr<material> mp;
@@ -28,7 +29,6 @@ class xy_rect : public hittable {
 class xz_rect : public hittable {
     public:
         xz_rect() = default;
-
         xz_rect(double _x0, double _x1, double _z0, double _z1, double _k,
             shared_ptr<material> mat);
 
@@ -51,6 +51,7 @@ class yz_rect : public hittable {
             
         virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const override;
         virtual bool bounding_box(double time0, double time1, aabb& output_box) const override;
+        virtual const vec3& random(const point3& origin) const override;
 
     public:
         shared_ptr<material> mp;
