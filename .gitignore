@@ -46,3 +46,4 @@ RayTracingInOneWeek/out
 *.exe
 *.out
 *.app
+/NextWeek/packages/vcpkg.D.cpplib.vcpkg.1.0.0
