@@ -1,7 +1,7 @@
 # Raytracing In One Week
 Implemented path tracer
 
-This project used vcpkg manage 3rd library.
+This project used vcpkg managed 3rd library.
 
 ```
     vcpkg install glfw3
@@ -17,5 +17,5 @@ One week result image(actually it takes me almost one month 0...0):
 
 # Raytracing In Next Week  
 Next week session2 result:  
-![img](images/cornellBox.jpg)  
-(400/225 1000spp --- random scene with bounding volume hierarchy)
+![img](images/cornellBox_v2.jpg)  
+(640x640 100spp --- cornell box)
