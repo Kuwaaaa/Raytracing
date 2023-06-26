@@ -8,6 +8,7 @@
 #include "scene/scene.h"
 #include "hit/bvh.h"
 #include "pdf.h"
+#include "avgTest.h"
 
 // Multithread perpixel
 #include <algorithm>
@@ -24,7 +25,8 @@ class CPU :
 {
 public:
 	CPU(Scene scene, bool par = true);
-	virtual void render(int ssp = 50) override;
+	virtual void render(int) override;
+
 	void setGlTex(GLuint texId);
 	void reset_Image();
 	void setMaxDepth(int depth);
@@ -38,6 +40,8 @@ private:
 private:
 	std::vector<std::size_t> m_ImageVerticalIter, m_ImageHorizontalIter;
 	bool isPar;
+	Accumulator acc1;
+	Accumulator acc2;
 };
 
 

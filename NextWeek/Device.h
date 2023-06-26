@@ -27,6 +27,6 @@ protected:
 	RenderInfo info;
 	Scene m_scene;
 	Camera m_camera;
-	double ssp_sum = 0;
+	double ssp_sum{ 0 };
 };
 

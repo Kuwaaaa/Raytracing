@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\vcpkg.D.cpplib.vcpkg.1.0.0\build\native\vcpkg.D.cpplib.vcpkg.props" Condition="Exists('packages\vcpkg.D.cpplib.vcpkg.1.0.0\build\native\vcpkg.D.cpplib.vcpkg.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -102,17 +103,24 @@
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ShowIncludes>false</ShowIncludes>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <DisableSpecificWarnings>4819</DisableSpecificWarnings>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="common.cpp" />
+    <ClCompile Include="CompShader.cpp" />
     <ClCompile Include="CPU.cpp" />
     <ClCompile Include="Device.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="hit\aabb.cpp" />
     <ClCompile Include="hit\aarect.cpp" />
     <ClCompile Include="hit\box.cpp" />
@@ -120,6 +128,7 @@
     <ClCompile Include="hit\hittable.cpp" />
     <ClCompile Include="hit\hittable_list.cpp" />
     <ClCompile Include="hit\sphere.cpp" />
+    <ClCompile Include="miniHelper.cpp" />
     <ClCompile Include="ONB.cpp" />
     <ClCompile Include="pdf.cpp" />
     <ClCompile Include="ray_expleam.cpp" />
@@ -128,6 +137,7 @@
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="vec3\ray.cpp" />
     <ClCompile Include="vec3\vec3.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd\stb_image.h" />
@@ -136,8 +146,10 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="common.h" />
+    <ClInclude Include="CompShader.h" />
     <ClInclude Include="CPU.h" />
     <ClInclude Include="Device.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="gl_camera.h" />
     <ClInclude Include="hit\aabb.h" />
     <ClInclude Include="hit\aarect.h" />
@@ -149,6 +161,7 @@
     <ClInclude Include="hit\sphere.h" />
     <ClInclude Include="hit\texture.h" />
     <ClInclude Include="material\material.h" />
+    <ClInclude Include="miniHelper.h" />
     <ClInclude Include="ONB.h" />
     <ClInclude Include="pdf.h" />
     <ClInclude Include="raytracing.h" />
@@ -162,18 +175,27 @@
     <ClInclude Include="util\timer.h" />
     <ClInclude Include="vec3\ray.h" />
     <ClInclude Include="vec3\vec3.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="build\main.rc" />
+    <ClInclude Include="Window.h" />
+    <ClInclude Include="avgTest.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="build\cmakefiles\3.23.0-rc1\CMakeDetermineCompilerABI_C.bin" />
     <None Include="build\cmakefiles\3.23.0-rc1\CMakeDetermineCompilerABI_CXX.bin" />
     <None Include="ClassDiagram.cd" />
+    <None Include="compTest.comp" />
+    <None Include="packages.config" />
     <None Include="test.frag" />
     <None Include="test.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\vcpkg.D.cpplib.vcpkg.1.0.0\build\native\vcpkg.D.cpplib.vcpkg.targets" Condition="Exists('packages\vcpkg.D.cpplib.vcpkg.1.0.0\build\native\vcpkg.D.cpplib.vcpkg.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\vcpkg.D.cpplib.vcpkg.1.0.0\build\native\vcpkg.D.cpplib.vcpkg.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\vcpkg.D.cpplib.vcpkg.1.0.0\build\native\vcpkg.D.cpplib.vcpkg.props'))" />
+    <Error Condition="!Exists('packages\vcpkg.D.cpplib.vcpkg.1.0.0\build\native\vcpkg.D.cpplib.vcpkg.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\vcpkg.D.cpplib.vcpkg.1.0.0\build\native\vcpkg.D.cpplib.vcpkg.targets'))" />
+  </Target>
 </Project>

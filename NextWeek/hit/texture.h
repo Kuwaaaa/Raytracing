@@ -69,7 +69,9 @@ public:
     img_texture()
         :data(nullptr), width(0), height(0), bytes_per_scanline(0) { }
 
-    img_texture(const char* filename) {
+    img_texture(const char* filename)
+        :img_texture()
+    {
         auto components_per_pixel = bytes_per_pixel;
 
         data = stbi_load(

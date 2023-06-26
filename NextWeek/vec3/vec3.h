@@ -7,50 +7,7 @@
 #include <iostream>
 
 using std::sqrt;
-
-class vec3 {
-    public:
-        vec3() : e{0,0,0} {}
-        vec3(double e) : vec3(e, e, e) {}
-        vec3(double e0, double e1, double e2) : e{e0, e1, e2} {}
-        
-
-        double x() const;
-        double y() const;
-        double z() const;
-
-        vec3 operator-() const;
-        const double& operator[](int i) const;
-        double& operator[](int i);
-
-        vec3& operator+=(const vec3& v);
-
-        vec3& operator*=(const double t);
-
-        vec3& operator/=(const double t);
-
-        double length() const;
-
-        double length_squared() const;
-
-        bool near_zero() const;
-
-        inline
-        static vec3 random() {
-            return vec3(random_double(), random_double(), random_double());
-        }
-
-        inline 
-        static vec3 random(double min, double max) {
-            return vec3(random_double(min,max), random_double(min,max), random_double(min,max));
-        }
-
-        std::ostream& operator << (std::ostream& out);
-
-    public:
-        double e[3];
-        
-};
+class vec3;
 
 // Type aliases for vec3
 using point3 = vec3;   // 3D point
@@ -91,5 +48,57 @@ vec3 refract(const vec3& uv, const vec3& n, double etai_over_etat);
 
 // 在z=0处生成一个随机平面
 vec3 random_in_unit_disk();
+
+class vec3 {
+    public:
+        vec3() : e{0,0,0} {}
+        vec3(double e) : vec3(e, e, e) {}
+        vec3(double e0, double e1, double e2) : e{e0, e1, e2} {}
+        
+        double x() const;
+        double y() const;
+        double z() const;
+
+        vec3 operator-() const;
+        const double& operator[](int i) const;
+        double& operator[](int i);
+
+        vec3& operator+=(const vec3& v);
+
+        vec3& operator*=(const double t);
+
+        vec3& operator/=(const double t);
+
+        double length() const;
+
+        double length_squared() const;
+
+        bool near_zero() const;
+
+        inline
+        static vec3 random() {
+            return vec3(random_double(), random_double(), random_double());
+        }
+
+        inline 
+        static vec3 random(double min, double max) {
+            return vec3(random_double(min,max), random_double(min,max), random_double(min,max));
+        }
+
+        vec3 normal() const {
+            return *this / this->length();
+        }
+
+        void normalize() {
+            *this = this->normal();
+        }
+
+        std::ostream& operator << (std::ostream& out);
+
+    public:
+        double e[3];
+        
+};
+
 
 #endif

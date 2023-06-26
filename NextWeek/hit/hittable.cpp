@@ -1,13 +1,18 @@
 #include "hittable.h"
 
-const double& hittable::pdf_value(const point3& o, const vec3& v) const
+const double hittable::pdf_value(const point3& o, const vec3& v) const
 {
     return 0.0;
 }
 
-const vec3& hittable::random(const vec3& o) const
+const vec3 hittable::random(const vec3& o) const
 {
-    return vec3(1, 1, 1);
+    return vec3(1, 0, 0);
+}
+
+void hittable::setEntity(const std::string_view& id)
+{
+    entity.id = id;
 }
 
 translate::translate(shared_ptr<hittable> p, const vec3& displacement)

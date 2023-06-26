@@ -15,10 +15,10 @@ public:
     vec3 direction() const { return dir; }*/
 
     // debug 7.89s, relese: 1.33s
-    const point3& origin() const;
-    const vec3& direction() const;
+    const point3 origin() const;
+    const vec3 direction() const;
     double time() const;
-    const point3& at(double t) const;
+    const point3 at(double t) const;
 
 public:
     point3 orig;

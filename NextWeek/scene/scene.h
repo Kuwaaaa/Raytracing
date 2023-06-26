@@ -38,9 +38,9 @@ public:
 	int image_size;
 	int max_depth;
 	float aspect_radio;
-
+	// Image result buffer
 	unsigned char* m_ImageBuffer;
-	unsigned char* m_sum_ImageBuffer;
+	double* m_sum_ImageBuffer;
 };
 
 #endif // !SCENE_H

@@ -2,16 +2,24 @@
 
 #include <chrono>
 #include <iostream>
+#include <string>
 
 struct Timer
 {
     std::chrono::time_point<std::chrono::steady_clock> start, end;
-    std::chrono::duration<double> duration;
+    std::chrono::duration<double> duration{ 0 };
+    std::string prompt{ "Timer:" };
     std::ostream& out;
 
-    Timer(std::ostream& os)
+    Timer(std::ostream& os = std::cout)
         : out(os)
     {
+        start = std::chrono::high_resolution_clock::now();
+    }
+
+    Timer(const std::string& p, std::ostream& os = std::cout)
+        :out(os), prompt(p) 
+    { 
         start = std::chrono::high_resolution_clock::now();
     }
 
@@ -27,7 +35,7 @@ struct Timer
         duration = end - start;
 
         double ms = duration.count() * 1000.0;
-        out << "Timer took " << ms << " ms\n";
+        out << prompt << " took " << ms << " ms\n";
     }
     
 };

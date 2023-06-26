@@ -15,7 +15,7 @@ struct scatter_record
 {
     ray specular_ray;
     bool is_specular;
-    vec3 attenuation;
+    vec3 fr;
     shared_ptr<pdf> pdf_ptr;
 
     /*~scatter_record() {
@@ -36,7 +36,7 @@ class material {
       ) const {
           return 0;
       }
-    virtual color emitted(const ray& r_in, const hit_record& rec, double u, double v, const point3& p) const {
+    virtual color emitted(const ray& r_in, const hit_record& rec) const {
         return color(0, 0, 0);
     }
 };
@@ -58,7 +58,7 @@ class lambertian : public material {
             uvw.build_from_w(rec.normal);
             auto direction = uvw.local(random_cosine_direction());
             scattered = ray(rec.p, unit_vector(direction), r_in.time());*/
-            srec.attenuation = albedo->value(rec.u, rec.v, rec.p);
+            srec.fr = albedo->value(rec.u, rec.v, rec.p);
             srec.pdf_ptr = make_shared<cosine_pdf>(rec.normal);
             return true;
         }
@@ -145,9 +145,10 @@ class diffuse_light : public material  {
             return false;
         }
 
-        virtual color emitted(const ray& r_in, const hit_record& rec, double u, double v, const point3& p) const override {
-            if (rec.front_face)
-                return emit->value(u, v, p);
+        virtual color emitted(const ray& r_in, const hit_record& rec) const override {
+            //if (rec.front_face)
+            if (1)
+                return emit->value(rec.u, rec.v, rec.p);
             else
                 return color(0, 0, 0);
         }

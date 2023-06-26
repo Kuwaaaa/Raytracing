@@ -31,14 +31,14 @@ private:
 
 class hittable_pdf : public pdf {
 public:
-    hittable_pdf(shared_ptr<hittable> p, const point3& origin);
+    hittable_pdf(hittable* p, const point3& origin);
 
     virtual const double value(const vec3& direction) const override;
     virtual const vec3 generate() const override;
 
 public:
     point3 o;
-    shared_ptr<hittable> ptr;
+    hittable* ptr;
 };
 
 class mixture_pdf : public pdf {

@@ -1,8 +1,8 @@
 #include "aarect.h"
 
 xy_rect::xy_rect(double _x0, double _x1, double _y0, double _y1, double _k,
-	shared_ptr<material> mat)
-	: x0(_x0), x1(_x1), y0(_y0), y1(_y1), k(_k), mp(mat) {
+	shared_ptr<material> mat, const std::string_view& id)
+	: x0(_x0), x1(_x1), y0(_y0), y1(_y1), k(_k), mp(mat), hittable(id) {
 	if (x0 > x1) std::swap(x0, x1);
 	if (y0 > y1) std::swap(y0, y1);
 };
@@ -24,6 +24,8 @@ bool xy_rect::hit(const ray& r, double t_min, double t_max, hit_record& rec) con
 	rec.set_face_normal(r, outward_normal);
 	rec.mat_ptr = mp;
 	rec.p = r.at(t);
+	rec.hittedObject = entity.id;
+
 	return true;
 }
 
@@ -36,11 +38,11 @@ bool xy_rect::bounding_box(double time0, double time1, aabb& output_box) const
 	return true;
 }
 
-const vec3& xy_rect::random(const point3& origin) const
-{
-	auto random_point = point3(random_double(x0, x1), random_double(y0, y1), k);
-	return random_point - origin;
-}
+//const vec3& xy_rect::random(const point3& origin) const
+//{
+//	auto random_point = point3(random_double(x1, x0), random_double(y1, y0), k);
+//	return random_point - origin;
+//}
 
 
 bool xz_rect::hit(const ray& r, double t_min, double t_max, hit_record& rec) const
@@ -59,14 +61,16 @@ bool xz_rect::hit(const ray& r, double t_min, double t_max, hit_record& rec) con
 	rec.set_face_normal(r, outward_normal);
 	rec.mat_ptr = mp;
 	rec.p = r.at(t);
+	rec.hittedObject = entity.id;
+
 	return true;
 }
 
 xz_rect::xz_rect(double _x0, double _x1, double _z0, double _z1, double _k,
-	shared_ptr<material> mat)
-	: x0(_x0), x1(_x1), z0(_z0), z1(_z1), k(_k), mp(mat)
+	shared_ptr<material> mat, const std::string_view& id)
+	: x0(_x0), x1(_x1), z0(_z0), z1(_z1), k(_k), mp(mat), hittable(id)
 {
-
+	
 };
 
 
@@ -78,29 +82,32 @@ bool xz_rect::bounding_box(double time0, double time1, aabb& output_box) const
 	return true;
 }
 
-inline const double& xz_rect::pdf_value(const point3& origin, const vec3& v) const
+inline const double xz_rect::pdf_value(const point3& origin, const vec3& v) const
 {
 	hit_record rec;
-	// 有遮挡时直接返回
 	if (!this->hit(ray(origin, v), 0.001, infinity, rec))
 		return 0;
 
 	auto area = (x1 - x0) * (z1 - z0);
 	auto distance_squared = rec.t * rec.t * v.length_squared();
-	auto cosine = fabs(dot(v, rec.normal) / v.length());
+	//auto cosine = fabs(dot(v, rec.normal) / v.length());
 
-	return distance_squared / (cosine * area);
+	//return distance_squared / (cosine * area);
+	return distance_squared / area;
 }
 
-inline const vec3& xz_rect::random(const point3& origin) const
+inline const vec3 xz_rect::random(const point3& origin) const
 {
-	auto random_point = point3(random_double(x0, x1), k, random_double(z0, z1));
+	auto random_point = point3(random_double(x1, x0), k, random_double(z1, z0));
 	return random_point - origin;
 }
 
 yz_rect::yz_rect(double _y0, double _y1, double _z0, double _z1, double _k,
-	shared_ptr<material> mat)
-	: y0(_y0), y1(_y1), z0(_z0), z1(_z1), k(_k), mp(mat) {}
+	shared_ptr<material> mat, const std::string_view& id)
+	: y0(_y0), y1(_y1), z0(_z0), z1(_z1), k(_k), mp(mat), hittable(id)
+{
+
+}
 
 
 bool yz_rect::hit(const ray& r, double t_min, double t_max, hit_record& rec) const
@@ -119,6 +126,8 @@ bool yz_rect::hit(const ray& r, double t_min, double t_max, hit_record& rec) con
 	rec.set_face_normal(r, outward_normal);
 	rec.mat_ptr = mp;
 	rec.p = r.at(t);
+	rec.hittedObject = entity.id;
+
 	return true;
 }
 
@@ -130,8 +139,8 @@ bool yz_rect::bounding_box(double time0, double time1, aabb& output_box) const
 	return true;
 }
 
-const vec3& yz_rect::random(const point3& origin) const
-{
-	auto random_point3 = point3(k, random_double(y0, y1), random_double(z0, z1));
-	return random_point3 - origin;
-}
+//const vec3& yz_rect::random(const point3& origin) const
+//{
+//	auto random_point3 = point3(k, random_double(y0, y1), random_double(z0, z1));
+//	return random_point3 - origin;
+//}

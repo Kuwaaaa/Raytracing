@@ -18,7 +18,8 @@ class Camera {
             double focus_dist = (point3(13, 2, 13) - point3(0, 0, 0)).length(),
             double _time0 = 0,
             double _time1 = 0
-         ) {
+         ) : time0(_time0), time1(_time1)
+        {
             // 当theta==90时, h = 1,图跟以前一样
             auto theta = degrees_to_radians(vfov);
             auto h = tan(theta/2);

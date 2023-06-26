@@ -50,11 +50,9 @@ Scene::Scene(int spp, color bg, int imgW, float ar, int max_d, SCENE_EXPLEAM exp
 
 	case SCENE_EXPLEAM::CORNELL_BOX:
 		world = cornell_box();
-		lights = make_shared<xz_rect>(213, 343, 227, 332, 554, shared_ptr<material>());
+		auto light = make_shared<diffuse_light>(color(15, 15, 15));
 		image_width = 640;
 		aspect_radio = 1.0f;
-		samples_per_pixel = 400;
-		background = color(0, 0, 0);
 		lookfrom = point3(278, 278, -800);
 		lookat = point3(278, 278, 0);
 		vfov = 40.0;
@@ -76,5 +74,5 @@ void Scene::initImageBuffer()
 	image_height = static_cast<int>(image_width / aspect_radio);
 	image_size = image_width * image_height * 3;
 	m_ImageBuffer = new unsigned char[image_size](0);
-	m_sum_ImageBuffer = new unsigned char[image_size](0);
+	m_sum_ImageBuffer = new double[image_size](0);
 }

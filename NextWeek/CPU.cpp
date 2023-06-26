@@ -1,4 +1,5 @@
 #include "CPU.h"
+#include <stdlib.h>
 
 color CPU::PerPixel(size_t x, size_t y, int ssp)
 {
@@ -27,32 +28,54 @@ color CPU::ray_color(const ray& r, int depth)
 	if (depth <= 0)
 		return color(0, 0, 0);
 
-	if (!m_scene.world.hit(r, 0.001, infinity, hrec))
+	if (!m_scene.world.hit(r, 0.0001, infinity, hrec))
 		return m_scene.background;
 
 	ray scattered;
-	color emitted = hrec.mat_ptr->emitted(r, hrec, hrec.u, hrec.v, hrec.p);
+	color emitted = hrec.mat_ptr->emitted(r, hrec);
 	if (!hrec.mat_ptr->scatter(r, hrec, srec))
 		return emitted;
 
-	auto lightPdf = make_shared<hittable_pdf>(m_scene.lights, hrec.p);
-	auto cosPdf   = make_shared<cosine_pdf>(hrec.normal);
-	//mixture_pdf mixed_pdf(cosPdf, cosPdf);
-	mixture_pdf mixed_pdf(lightPdf, lightPdf);
+	static xz_rect* light = new xz_rect(213, 343, 227, 332, 554, make_shared<diffuse_light>(color(15, 15, 15)), "light");
 
-	scattered = ray(hrec.p, mixed_pdf.generate(), r.time());
-	auto pdfValue = mixed_pdf.value(scattered.direction());
+	//hittable_pdf lightPdf(aaaaa, hrec.p);
+	shared_ptr<hittable_pdf> lightPdf = make_shared<hittable_pdf>(light, hrec.p);
+	shared_ptr<pdf> matPdf = srec.pdf_ptr;
+	auto mixed_pdf = make_shared<mixture_pdf>(matPdf, matPdf);
+
+	scattered = ray(hrec.p, mixed_pdf->generate(), r.time());
+	color dirColor(0);
+	vec3 toLight = lightPdf->generate();
+	hit_record htemp;
+	scatter_record stemp;
+	bool hitted = m_scene.world.hit(ray(hrec.p, toLight.normal()), 0.0001, infinity, htemp);
+	
+	if (htemp.hittedObject == "light")
+	{
+		double lightNorDotToLight = (dot(-toLight.normal(), htemp.normal));
+		double objToLight = (dot(hrec.normal, toLight.normal()));
+
+		//htemp.mat_ptr->scatter(ray(hrec.p,toLight), htemp, stemp);
+		auto value = lightPdf->value(toLight);
+		color lc = light->mp->emitted(r, hrec);
+		dirColor = lc * srec.fr * lightNorDotToLight * objToLight / value;
+	}
+	auto pdfValue = mixed_pdf->value(toLight);
+
+	auto sPdf = hrec.mat_ptr->scattering_pdf(r, hrec, scattered);
+
+	color boundColor(0);
+	boundColor = srec.fr * ray_color(scattered, depth - 1);
 
 	//return (emitted + attenuation * ray_color(scattered, depth - 1)) / lifePR;
-	return emitted + srec.attenuation * hrec.mat_ptr->scattering_pdf(r, hrec, scattered)
-		* ray_color(scattered, depth - 1) / pdfValue;
+	return dirColor + boundColor;
+	//return emitted + dirColor + srec.attenuation * sPdf *color;
 }
 
 
 void CPU::reset_Image()
 {
-	for (int i = 0; i < m_scene.image_size; i++)
-		m_scene.m_sum_ImageBuffer[i] = 0;
+	memset(m_scene.m_sum_ImageBuffer, 0, m_scene.image_size * sizeof(double));
 	ssp_sum = 0;
 }
 
@@ -78,7 +101,7 @@ CPU::CPU(Scene scene, bool par/*=true*/)
 
 void CPU::render(int ssp /*= 50*/)
 {
-	double r, g, b;
+	double r{ 0 }, g{ 0 }, b{ 0 };
 	ssp_sum += ssp;
 	auto scale = 1.0 / ssp_sum;
 
@@ -108,28 +131,28 @@ void CPU::render(int ssp /*= 50*/)
 	}
 	else
 	{
-		std::for_each(std::execution::seq, m_ImageVerticalIter.begin(), m_ImageVerticalIter.end(), [&](std::size_t x)
+		// For debug
+		for(int i=0; i<m_scene.image_height; i++)
+			for (int j = 0; j < m_scene.image_width; j++)
 			{
-				std::for_each(std::execution::seq, m_ImageHorizontalIter.begin(), m_ImageHorizontalIter.end(), [&](std::size_t y)
-					{
-						color pixel_color(0, 0, 0);
-						pixel_color = PerPixel(x, y, ssp);
-						size_t idx = (x + y * m_scene.image_width) * 3;
+				color pixel_color(0, 0, 0);
+				pixel_color = PerPixel(j, i, ssp);
+				size_t idx = (j + i * m_scene.image_width) * 3;
 
-						m_scene.m_sum_ImageBuffer[idx] += pixel_color[0];
-						m_scene.m_sum_ImageBuffer[idx + 1] += pixel_color[1];
-						m_scene.m_sum_ImageBuffer[idx + 2] += pixel_color[2];
+				m_scene.m_sum_ImageBuffer[idx] += pixel_color[0];
+				m_scene.m_sum_ImageBuffer[idx + 1] += pixel_color[1];
+				m_scene.m_sum_ImageBuffer[idx + 2] += pixel_color[2];
 
-						r = sqrt(scale * m_scene.m_sum_ImageBuffer[idx]);
-						g = sqrt(scale * m_scene.m_sum_ImageBuffer[idx + 1]);
-						b = sqrt(scale * m_scene.m_sum_ImageBuffer[idx + 2]);
+				r = sqrt(scale * m_scene.m_sum_ImageBuffer[idx]);
+				g = sqrt(scale * m_scene.m_sum_ImageBuffer[idx + 1]);
+				b = sqrt(scale * m_scene.m_sum_ImageBuffer[idx + 2]);
 
-						m_scene.m_ImageBuffer[idx] = static_cast<unsigned char>(256 * clamp(r, 0.0, 0.999));
-						m_scene.m_ImageBuffer[idx + 1] = static_cast<unsigned char>(256 * clamp(g, 0.0, 0.999));
-						m_scene.m_ImageBuffer[idx + 2] = static_cast<unsigned char>(256 * clamp(b, 0.0, 0.999));
-					});
-			});
+				m_scene.m_ImageBuffer[idx] = static_cast<unsigned char>(256 * clamp(r, 0.0, 0.999));
+				m_scene.m_ImageBuffer[idx + 1] = static_cast<unsigned char>(256 * clamp(g, 0.0, 0.999));
+				m_scene.m_ImageBuffer[idx + 2] = static_cast<unsigned char>(256 * clamp(b, 0.0, 0.999));
+			}
 	}
+
 }
 
 
